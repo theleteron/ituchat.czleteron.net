@@ -1,3 +1,7 @@
+<?php
+  // Protect access to the website by password (remove this if password protection is not needed)
+  require_once('secure.php');
+?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
   <head>
@@ -7,7 +11,8 @@
     <meta name="author" content="Roman Janiczek" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!-- Ionicons - https://ionicons.com/ -->
-    <script src="https://unpkg.com/ionicons@5.2.3/dist/ionicons.js"></script>
+    <script type="module" src="https://unpkg.com/ionicons@5.2.3/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule="" src="https://unpkg.com/ionicons@5.2.3/dist/ionicons/ionicons.js"></script>
     <!-- CSS for ITU CHAT 2020 -->
     <style type="text/css">
       html, body { 
@@ -33,6 +38,9 @@
         background-color: #222222; 
         color: #f8f8f8;
       }
+      #status {
+        color: #949494;
+      }
       .submitForm {
         width: 80%; 
         margin: 10px auto;
@@ -56,6 +64,10 @@
         border: none; 
         outline: none;
       }
+      ion-icon {
+        color: #f8f8f8;
+        font-size: 16px;
+      }
     </style>
   </head>
 
@@ -64,8 +76,8 @@
 
     <div class="submitForm">
       <form onsubmit="return uploadData()">
-        <input class="inputBox" type="text" id="newMessageString" placeholder="Your message here ...">
-        <button class="inputSub" type="submit" value="send"><i class="icon ion-android-arrow-forward"></i></button>
+        <input class="inputBox" type="text" id="newMessageString" placeholder="Your message here ..." minlength="1" maxlength="1024" required>
+        <button class="inputSub" type="submit" value="send"><ion-icon name="arrow-forward-outline"></ion-icon></button>
       </form>
     </div>
 
@@ -73,6 +85,9 @@
   </body>
 
   <script type="text/javascript">
+    // Address of API server
+    var apiAddress = "https://ituchat.czleteron.net/api.php";
+    // Other variables
     var lastMsgId = 0;
     var user = prompt("Please enter your name", "xlogin00");
 
@@ -108,7 +123,7 @@
         var xmlHttp = createXmlHttpRequestObject(); //stores XMLHttpRequestObject
 
         var params = "data=" + document.getElementById('newMessageString').value + "&user=" + user;
-        xmlHttp.open("POST", "https://ituchat.czleteron.net/api.php", true);
+        xmlHttp.open("POST", apiAddress, true);
         xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;");
         xmlHttp.onreadystatechange = downloadData;
         xmlHttp.send(params);
@@ -126,7 +141,7 @@
       document.getElementById("status").innerHTML = "downloadData()";
 
       var xmlHttp = createXmlHttpRequestObject();
-      xmlHttp.open("GET", "https://ituchat.czleteron.net/api.php", true);
+      xmlHttp.open("GET", apiAddress, true);
       xmlHttp.onreadystatechange = receiveData;
       xmlHttp.send(null);
 
@@ -134,24 +149,31 @@
 
     function receiveData() {
       document.getElementById("status").innerHTML = "receiveData()";
+      var newMsg = false;
 
       if ((xmlHttp.readyState==4) && (xmlHttp.status==200)) { //process is completed and http status is OK
         var pole = JSON.parse(xmlHttp.responseText);
         for ( var i in pole ) {
           if (lastMsgId < pole[i].id) {
-            document.getElementById('chatArea').innerHTML += '<span id="' + pole[i].id + '">['+ pole[i].dts +'] <b>' + pole[i].login + ':</b> ' + pole[i].cnt + '</span><br>';
+            newMsg = true;
+            let date = new Date(pole[i].dts);
+            document.getElementById('chatArea').innerHTML += '<span title="' + pole[i].id + '" id="' + pole[i].id + '"><span style="color: #949494;">['+ date.getHours() + ':' + date.getMinutes() +
+                                                            ']</span> <b>' + pole[i].login + ':</b> ' + pole[i].cnt + '</span><br>';
             document.getElementById("status").innerHTML = ' ID of the last msg: ' + pole[i].id + ' from ' + pole[i].login;
-            console.log("[NEW MSG]" + pole[i].id);
+            console.log('%c [NEW MSG] ', 'background: #222; color: #FFA500', pole[i].id);
             lastMsgId = pole[i].id;
 
             var element = document.getElementById(lastMsgId);
             element.scrollIntoView({ behavior: 'smooth' });
           }
         }
+        if (!newMsg) {
+          console.log('%c [NO NEW MSG]', 'background: #222; color: #008000');
+        }
         document.getElementById("status").innerHTML = ' ID of the last msg: ' + lastMsgId + ' from ' + pole[i].login;
       } 
     }
     downloadData();
-    setInterval(downloadData, 3000);
+    setInterval(downloadData, 1000);
   </script>
 </html>
