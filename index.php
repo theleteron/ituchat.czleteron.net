@@ -15,6 +15,29 @@
     <script nomodule="" src="https://unpkg.com/ionicons@5.2.3/dist/ionicons/ionicons.js"></script>
     <!-- CSS for ITU CHAT 2020 -->
     <style type="text/css">
+      /* width */
+      #chatArea::-webkit-scrollbar {
+        width: 5px;
+      }
+
+      /* Track */
+      #chatArea::-webkit-scrollbar-track {
+        background: #222222; 
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	      border-radius: 3px;
+      }
+      
+      /* Handle */
+      #chatArea::-webkit-scrollbar-thumb {
+        background: #949494; 
+        border-radius: 3px;
+	      -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+      }
+
+      /* Handle on hover */
+      #chatArea::-webkit-scrollbar-thumb:hover {
+        background: #555; 
+      }
       html, body { 
         height: 100%; 
         width: 100%; 
