@@ -30,7 +30,7 @@
   // Save data received by POST to database
   if (isset($_REQUEST['data'])) {
     $query = sprintf("INSERT INTO `itu-ajax` (`login`, `cnt`, `dts`) VALUES ('%s', '%s', CURRENT_TIMESTAMP )", 
-    $mysqli -> real_escape_string($user), $mysqli -> real_escape_string(strip_tags($_REQUEST['data'])));
+    $mysqli -> real_escape_string(strip_tags($user)), $mysqli -> real_escape_string(strip_tags($_REQUEST['data'])));
     // Error during SQL query
     if (!$mysqli -> query($query)) {
       throw new Exception($mysqli -> error());

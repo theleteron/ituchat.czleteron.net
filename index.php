@@ -296,7 +296,7 @@
 
             // Add MSG to chatArea and status bar
             document.getElementById('chatArea').innerHTML += '<span title="' + msgArray[i].id + '" id="' + msgArray[i].id + '"><span style="color: #949494;">['+ (date.getHours()<10?'0':'') + date.getHours() + ':' 
-                                                          + (date.getMinutes()<10?'0':'') + date.getMinutes() + ']</span> <b>' + sanitizeHTML(msgArray[i].login) + ':</b> ' + sanitizeHTML(msgArray[i].cnt) + '</span><br>';
+                                                          + (date.getMinutes()<10?'0':'') + date.getMinutes() + ']</span> <b>' + sanitizeHTML(msgArray[i].login) + ':</b> ' + msgArray[i].cnt + '</span><br>';
             document.getElementById("status").innerHTML = ' ID of the last msg: ' + msgArray[i].id + ' from ' + sanitizeHTML(msgArray[i].login);
 
             // === DEBUG OUTPUT --- LOG ID OF EVERY NEW MSG TO CONSOLE ===
