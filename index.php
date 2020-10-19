@@ -101,7 +101,7 @@
     <!-- form for sending new msgs -->
     <div class="submitForm">
       <form onsubmit="return uploadData()">
-        <input class="inputBox" type="text" id="newMessageString" placeholder="Your message here ..." minlength="1" maxlength="1024" required>
+        <input class="inputBox" type="text" id="newMessageString" placeholder="Your message here ..." minlength="1" maxlength="1024" autocomplete="off" required>
         <button class="inputSub" type="submit" value="send"><ion-icon name="arrow-forward-outline"></ion-icon></button>
       </form>
     </div>
@@ -121,12 +121,12 @@
     // List of default APIs servers 
     let defaultAPI = ["https://ituchat.czleteron.net/api.php", "http://pckiss.fit.vutbr.cz/itu/api.php", "http://www.stud.fit.vutbr.cz/~xmlich02/itu-ajax/api.php"];
     var currentAPI = 0;
-    var totalAPI = 4;
+    var totalAPI = 3;
     // Address of API server
     var apiAddress = prompt("Enter API address", "");
     if (apiAddress == null || apiAddress == "") {
       apiAddress = defaultAPI[0];
-      totalAPI = 3;
+      totalAPI = 2;
     } else {
       defaultAPI.push(apiAddress);
     }
@@ -210,6 +210,9 @@
       }
     }
 
+    /**
+     * Upload data function - Runs when you send a msg (send a msg to the API which saves it to db)
+     */
     function uploadData() {
       // === DEBUG OUTPUT --- CURRENTLY RUNNING FUNC ===
       if (debug) {
@@ -237,6 +240,9 @@
       return false; // to avoid default form submit behavior 
     }
 
+    /**
+     * Download data function - Runs every time you request new msgs from the API (download new msgs from db using the API)
+     */
     function downloadData() {
       // === DEBUG OUTPUT --- CURRENTLY RUNNING FUNC ===
       if (debug) {
@@ -255,6 +261,9 @@
 
     }
 
+    /**
+     * Receive data - Run with every download data call (format received data and display them to chatArea)
+     */
     function receiveData() {
       // === DEBUG OUTPUT --- CURRENTLY RUNNING FUNC ===
       if (debug) {
@@ -287,8 +296,8 @@
 
             // Add MSG to chatArea and status bar
             document.getElementById('chatArea').innerHTML += '<span title="' + msgArray[i].id + '" id="' + msgArray[i].id + '"><span style="color: #949494;">['+ (date.getHours()<10?'0':'') + date.getHours() + ':' 
-                                                          + (date.getMinutes()<10?'0':'') + date.getMinutes() + ']</span> <b>' + msgArray[i].login + ':</b> ' + msgArray[i].cnt + '</span><br>';
-            document.getElementById("status").innerHTML = ' ID of the last msg: ' + msgArray[i].id + ' from ' + msgArray[i].login;
+                                                          + (date.getMinutes()<10?'0':'') + date.getMinutes() + ']</span> <b>' + sanitizeHTML(msgArray[i].login) + ':</b> ' + sanitizeHTML(msgArray[i].cnt) + '</span><br>';
+            document.getElementById("status").innerHTML = ' ID of the last msg: ' + msgArray[i].id + ' from ' + sanitizeHTML(msgArray[i].login);
 
             // === DEBUG OUTPUT --- LOG ID OF EVERY NEW MSG TO CONSOLE ===
             console.log('%c [NEW MSG] ', 'background: #222; color: #FFA500', msgArray[i].id);
@@ -307,9 +316,19 @@
         }
         // ===
         // Update status bar
-        document.getElementById("status").innerHTML = ' ID of the last msg: ' + lastMsgId + ' from ' + msgArray[i].login;
+        document.getElementById("status").innerHTML = ' ID of the last msg: ' + lastMsgId + ' from ' + sanitizeHTML(msgArray[i].login);
       } 
     }
+
+    /**
+     * Sanitize data (as some of the APIs are not protected against XSS)
+     */
+    function sanitizeHTML(text) {
+      var element = document.createElement('span');
+      element.innerText = text;
+      return element.innerHTML;
+    }
+
     downloadData();                    // Initial download
     setInterval(downloadData, 1000);   // Download newest msgs every 1s (1000ms)
   </script>
