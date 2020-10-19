@@ -1,6 +1,6 @@
 <?php
   // Protect access to the website by password (remove this if password protection is not needed)
-  require_once('secure.php');
+  //require_once('secure.php'); // Link to security (not included on Git)
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
@@ -306,8 +306,10 @@
             lastMsgId = msgArray[i].id;
 
             // Scroll to the newest msg
-            var element = document.getElementById(lastMsgId);
-            element.scrollIntoView({ behavior: 'smooth' });
+            //var element = document.getElementById(lastMsgId);
+            //element.scrollIntoView({ behavior: 'smooth' });
+            var objDiv = document.getElementById("chatArea");
+            objDiv.scrollTop = objDiv.scrollHeight;
           }
         }
         // === DEBUG OUTPUT --- LOG THAT NO NEW MSGs WERE RECEIVED ===
